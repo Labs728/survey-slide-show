@@ -1,32 +1,40 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import SurveyHeader from '@/components/SurveyHeader';
+import SurveyPreloader from '@/components/SurveyPreloader';
 
 const ThankYou = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="text-center max-w-md px-4">
-        <div className="w-16 h-16 mx-auto mb-6 bg-survey-red rounded-full flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
+    <div className="min-h-screen bg-white flex flex-col">
+      <SurveyPreloader isLoading={loading} />
+      
+      <SurveyHeader />
+      
+      <main className="flex-1 flex flex-col items-center justify-center p-6">
+        <div className="max-w-md w-full text-center space-y-6 animate-fade-in">
+          <img 
+            src="/lovable-uploads/60a84dc7-867a-4d25-adb7-6c60de8e72cf.png" 
+            alt="House" 
+            className="w-40 h-40 mx-auto mb-4"
+          />
+          
+          <h1 className="text-3xl font-bold text-gray-900">Thank You!</h1>
+          
+          <p className="text-xl text-gray-700">
+            Thanks for taking your time to answer our survey. Someone will be with you shortly.
+          </p>
         </div>
-        <h1 className="text-3xl font-bold mb-4">Thank You!</h1>
-        <p className="text-xl text-gray-600 mb-8">
-          Thanks for taking your time to answer our survey, someone will be with you shortly.
-        </p>
-        <div className="w-24 h-1 bg-survey-red mx-auto rounded-full"></div>
-      </div>
+      </main>
     </div>
   );
 };

@@ -1,10 +1,13 @@
-import React, { useState, useRef } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import SurveyQuestion from '@/components/SurveyQuestion';
 import SurveyOption from '@/components/SurveyOption';
 import SurveyButton from '@/components/SurveyButton';
 import SurveyInput from '@/components/SurveyInput';
+import SurveyHeader from '@/components/SurveyHeader';
+import SurveyPreloader from '@/components/SurveyPreloader';
 import { RefreshIcon, HomeIcon, MoneyIcon } from '@/components/icons/SurveyIcons';
 
 const surveyQuestions = [
@@ -49,9 +52,19 @@ const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [animationState, setAnimationState] = useState<'in' | 'out' | 'none'>('in');
+  const [loading, setLoading] = useState(true);
   const formRef = useRef<HTMLFormElement>(null);
 
   const currentQuestion = surveyQuestions[currentQuestionIndex];
+
+  useEffect(() => {
+    // Simulate loading time for preloader
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleOptionSelect = (optionId: string) => {
     setAnswers({ ...answers, [currentQuestion.id]: optionId });
@@ -95,9 +108,20 @@ const Index = () => {
       }
       return;
     }
+    
     setAnimationState('out');
     setTimeout(() => {
       setCurrentQuestionIndex(prev => prev + 1);
+      setAnimationState('in');
+    }, 300);
+  };
+
+  const handleBack = () => {
+    if (currentQuestionIndex === 0) return;
+    
+    setAnimationState('out');
+    setTimeout(() => {
+      setCurrentQuestionIndex(prev => prev - 1);
       setAnimationState('in');
     }, 300);
   };
@@ -118,6 +142,7 @@ const Index = () => {
             ))}
             <div className="mt-8">
               <SurveyButton
+                variant={currentQuestionIndex === 0 ? 'primary' : 'black'}
                 onClick={handleNext}
                 disabled={isNextButtonDisabled()}
               >
@@ -131,7 +156,7 @@ const Index = () => {
         return (
           <>
             <SurveyInput
-              label={currentQuestion.title}
+              label=""
               prefix={currentQuestion.prefix}
               placeholder={currentQuestion.placeholder}
               type={currentQuestion.inputType}
@@ -140,6 +165,7 @@ const Index = () => {
             />
             <div className="mt-8">
               <SurveyButton
+                variant="black"
                 onClick={handleNext}
                 disabled={isNextButtonDisabled()}
               >
@@ -175,6 +201,7 @@ const Index = () => {
             />
             <div className="mt-8">
               <SurveyButton
+                variant="black"
                 type="button"
                 onClick={handleNext}
                 disabled={isNextButtonDisabled()}
@@ -192,12 +219,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <header className="bg-survey-black text-white p-4 text-center">
-        <h1 className="text-xl font-bold">Mortgage Survey</h1>
-      </header>
+      <SurveyPreloader isLoading={loading} />
       
-      <main className="flex-1 flex items-center justify-center overflow-hidden relative">
-        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200">
+      <SurveyHeader />
+      
+      <main className="flex-1 flex flex-col overflow-hidden relative pt-4 pb-16">
+        <div className="fixed top-[52px] left-0 w-full h-1 bg-gray-200 z-10">
           <div 
             className="h-full bg-survey-red transition-all duration-300" 
             style={{ 
@@ -206,22 +233,28 @@ const Index = () => {
           />
         </div>
         
-        {currentQuestion.id === 'goal' && (
-          <div className="absolute top-12 left-0 right-0 px-4 mb-8 text-center">
-            <h1 className="text-3xl font-bold mb-2">Make a 0% down</h1>
-            <h1 className="text-3xl font-bold mb-2">payment and skip the</h1>
-            <h1 className="text-3xl font-bold mb-2">mortgage insurance.</h1>
-            <h1 className="text-3xl font-bold mb-6">See if you qualify for a</h1>
-            <h1 className="text-3xl font-bold">VA loan today!</h1>
+        <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-10">
+          {currentQuestionIndex === 0 && (
+            <div className="text-center mb-10">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2">Make a 0% down</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2">payment and skip the</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2">mortgage insurance.</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold">See if you qualify for a</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold">VA loan today!</h1>
+            </div>
+          )}
+          
+          <div className="w-full max-w-md mx-auto">
+            <SurveyQuestion 
+              title={currentQuestion.title} 
+              animate={animationState}
+              onBack={handleBack}
+              showBackButton={currentQuestionIndex > 0}
+            >
+              {renderQuestion()}
+            </SurveyQuestion>
           </div>
-        )}
-        
-        <SurveyQuestion 
-          title={currentQuestion.id !== 'goal' ? currentQuestion.title : ''} 
-          animate={animationState}
-        >
-          {renderQuestion()}
-        </SurveyQuestion>
+        </div>
       </main>
     </div>
   );

@@ -1,69 +1,142 @@
-# Welcome to your Lovable project
 
-## Project info
+# Mortgage Survey Application
 
-**URL**: https://lovable.dev/projects/564e872c-cf98-4ed9-bbb1-9f7c0e7e57a8
+This is an animated survey application with a slide-based question interface. It features a responsive design that works well on mobile devices and includes a custom loading screen, navigation, and elegant transitions.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- Single-question-at-a-time interface with smooth slide animations
+- Progress indicator at the top of the survey
+- Back button to revisit previous questions
+- Mobile-responsive design
+- Custom house preloader
+- Multiple question types (options, input fields, forms)
+- Beautiful "Thank You" page after submission
 
-**Use Lovable**
+## Project Setup
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/564e872c-cf98-4ed9-bbb1-9f7c0e7e57a8) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Adding New Questions
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The survey questions are defined in the `surveyQuestions` array in `src/pages/Index.tsx`. You can add, remove, or modify questions by editing this array.
 
-**Use GitHub Codespaces**
+### Question Types
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+#### Option Questions
 
-## What technologies are used for this project?
+For questions with multiple choices:
 
-This project is built with .
+```javascript
+{
+  id: 'uniqueId',
+  title: 'Your question text here?',
+  type: 'options',
+  options: [
+    { id: 'option1', label: 'Option 1 Text', icon: <YourIconComponent /> }, // Icon is optional
+    { id: 'option2', label: 'Option 2 Text' },
+    // Add as many options as needed
+  ],
+}
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+#### Input Questions
 
-## How can I deploy this project?
+For questions requiring text/number input:
 
-Simply open [Lovable](https://lovable.dev/projects/564e872c-cf98-4ed9-bbb1-9f7c0e7e57a8) and click on Share -> Publish.
+```javascript
+{
+  id: 'uniqueId',
+  title: 'Your input question text here?',
+  type: 'input',
+  inputType: 'number', // or 'text', 'email', etc.
+  placeholder: 'Placeholder text',
+  prefix: '$', // Optional prefix for the input
+}
+```
 
-## I want to use a custom domain - is that possible?
+#### Form Questions
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+For multi-input form sections:
+
+```javascript
+{
+  id: 'contactInfo',
+  title: 'Contact information',
+  type: 'form',
+  // The form fields are defined in the renderQuestion function in Index.tsx
+}
+```
+
+## Customizing Styles
+
+The application uses Tailwind CSS for styling. You can modify the colors, spacing, and other design elements by:
+
+1. Editing the component files directly
+2. Updating the theme colors in `tailwind.config.ts`
+3. Adding custom CSS classes in `src/index.css`
+
+## Implementation Details
+
+### Animation
+
+The slide animations are controlled by:
+
+1. CSS animations defined in `src/index.css`
+2. The `animationState` state variable in the Index component
+
+### Navigation
+
+- Forward navigation occurs when clicking the "Next" button
+- Backward navigation uses the "Back" button added to the question component
+
+### Form Submission
+
+The form submission process:
+
+1. Collects all question answers into a FormData object
+2. Submits the data (currently simulated with a timeout)
+3. Redirects to the "Thank You" page
+
+## Adding New Features
+
+### Custom Question Types
+
+To add a new question type:
+
+1. Add a new case in the `renderQuestion` function in `Index.tsx`
+2. Create any necessary components
+3. Update the `isNextButtonDisabled` function to handle validation for your new question type
+
+### Custom Styling
+
+The project uses a color palette of white, red, and black, with green for selected options. To modify:
+
+1. Update the theme colors in `tailwind.config.ts`
+2. Edit component styling directly in their respective files
+
+## Mobile Optimization
+
+The application is designed to be fully responsive:
+
+- Flexible layouts using Flexbox
+- Media queries for different screen sizes
+- Touch-friendly large buttons and input fields
+- Proper spacing for mobile devices
+
+## Important Components
+
+- `SurveyQuestion`: Handles the question container and animations
+- `SurveyOption`: Renders option-type questions with selection
+- `SurveyInput`: Custom input fields with optional prefixes
+- `SurveyButton`: Styled buttons for navigation
+- `SurveyHeader`: The application header with logo
+- `SurveyPreloader`: Loading screen with house image

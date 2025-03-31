@@ -21,21 +21,21 @@ const SurveyOption: React.FC<SurveyOptionProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-between p-5 mb-4 bg-gray-50 rounded-lg cursor-pointer transition-all',
-        'hover:bg-gray-100',
+        'flex items-center justify-between p-5 mb-4 rounded-full cursor-pointer transition-all',
+        selected ? 'bg-[#eefaf3] border border-[#17a85e]' : 'bg-gray-50 hover:bg-gray-100',
         className
       )}
       onClick={onClick}
     >
       <div className="flex items-center">
-        {icon && <span className="mr-4">{icon}</span>}
+        {icon && <span className="mr-4 text-gray-700">{icon}</span>}
         <span className="text-lg font-medium">{label}</span>
       </div>
       <div className={cn(
-        'w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center',
-        selected ? 'border-survey-red' : ''
+        'w-8 h-8 rounded-full flex items-center justify-center',
+        selected ? 'bg-[#17a85e] border-[#17a85e]' : 'border border-gray-300'
       )}>
-        {selected && <Check className="w-4 h-4 text-survey-red" />}
+        {selected && <Check className="w-5 h-5 text-white" />}
       </div>
     </div>
   );
