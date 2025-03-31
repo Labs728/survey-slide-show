@@ -9,7 +9,7 @@ This is an animated survey application with a slide-based question interface. It
 - Progress indicator at the top of the survey
 - Back button to revisit previous questions
 - Mobile-responsive design
-- Custom house preloader
+- Custom house preloader with animated progress bar
 - Multiple question types (options, input fields, forms)
 - Beautiful "Thank You" page after submission
 
@@ -48,6 +48,8 @@ For questions with multiple choices:
 }
 ```
 
+Selected options will automatically be styled with green backgrounds and checkmarks.
+
 #### Input Questions
 
 For questions requiring text/number input:
@@ -76,52 +78,35 @@ For multi-input form sections:
 }
 ```
 
-## Customizing Styles
+## Customizing the Preloader
 
-The application uses Tailwind CSS for styling. You can modify the colors, spacing, and other design elements by:
+The preloader component in `src/components/SurveyPreloader.tsx` displays a custom house image and an animated progress bar. You can:
 
-1. Editing the component files directly
-2. Updating the theme colors in `tailwind.config.ts`
-3. Adding custom CSS classes in `src/index.css`
+1. Replace the house image by updating the image source
+2. Adjust animation timing by modifying the setTimeout values
+3. Change the styling of the progress bar using Tailwind classes
 
-## Implementation Details
-
-### Animation
-
-The slide animations are controlled by:
-
-1. CSS animations defined in `src/index.css`
-2. The `animationState` state variable in the Index component
-
-### Navigation
+## Navigation Between Questions
 
 - Forward navigation occurs when clicking the "Next" button
-- Backward navigation uses the "Back" button added to the question component
+- Backward navigation uses the "Back" button to revisit previous questions
+- Users can correct answers by navigating back and selecting different options
 
-### Form Submission
+## Progress Indicator
+
+The progress bar at the top shows how far the user has advanced in the survey:
+
+1. It automatically updates based on the current question index
+2. The width is calculated as: (currentIndex + 1) / totalQuestions * 100%
+3. The color is set in the Progress component (default: primary color)
+
+## Form Submission
 
 The form submission process:
 
 1. Collects all question answers into a FormData object
 2. Submits the data (currently simulated with a timeout)
 3. Redirects to the "Thank You" page
-
-## Adding New Features
-
-### Custom Question Types
-
-To add a new question type:
-
-1. Add a new case in the `renderQuestion` function in `Index.tsx`
-2. Create any necessary components
-3. Update the `isNextButtonDisabled` function to handle validation for your new question type
-
-### Custom Styling
-
-The project uses a color palette of white, red, and black, with green for selected options. To modify:
-
-1. Update the theme colors in `tailwind.config.ts`
-2. Edit component styling directly in their respective files
 
 ## Mobile Optimization
 
@@ -139,4 +124,12 @@ The application is designed to be fully responsive:
 - `SurveyInput`: Custom input fields with optional prefixes
 - `SurveyButton`: Styled buttons for navigation
 - `SurveyHeader`: The application header with logo
-- `SurveyPreloader`: Loading screen with house image
+- `SurveyPreloader`: Loading screen with house image and progress bar
+- `Progress`: UI component for progress indicators
+
+## Adding Custom Icons
+
+To add a custom icon for use in questions:
+
+1. Create a new icon component in the `SurveyIcons.tsx` file
+2. Import and use it in your question definition

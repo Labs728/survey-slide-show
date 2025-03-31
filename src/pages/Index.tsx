@@ -9,6 +9,7 @@ import SurveyInput from '@/components/SurveyInput';
 import SurveyHeader from '@/components/SurveyHeader';
 import SurveyPreloader from '@/components/SurveyPreloader';
 import { RefreshIcon, HomeIcon, MoneyIcon } from '@/components/icons/SurveyIcons';
+import { Progress } from '@/components/ui/progress';
 
 const surveyQuestions = [
   {
@@ -41,6 +42,34 @@ const surveyQuestions = [
     ],
   },
   {
+    id: 'name',
+    title: 'What is your full name?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. John Doe',
+  },
+  {
+    id: 'email',
+    title: 'What is your email address?',
+    type: 'input',
+    inputType: 'email',
+    placeholder: 'e.g. john@example.com',
+  },
+  {
+    id: 'propertyAddress',
+    title: 'What is the property address?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123 Main St, City, State',
+  },
+  {
+    id: 'idNumber',
+    title: 'What is your ID number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. AB123456',
+  },
+  {
     id: 'contact',
     title: 'How can we contact you?',
     type: 'form',
@@ -56,12 +85,13 @@ const Index = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const currentQuestion = surveyQuestions[currentQuestionIndex];
+  const progressPercentage = ((currentQuestionIndex + 1) / surveyQuestions.length) * 100;
 
   useEffect(() => {
     // Simulate loading time for preloader
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 2500);
     
     return () => clearTimeout(timer);
   }, []);
@@ -223,17 +253,12 @@ const Index = () => {
       
       <SurveyHeader />
       
-      <main className="flex-1 flex flex-col overflow-hidden relative pt-4 pb-16">
-        <div className="fixed top-[52px] left-0 w-full h-1 bg-gray-200 z-10">
-          <div 
-            className="h-full bg-survey-red transition-all duration-300" 
-            style={{ 
-              width: `${((currentQuestionIndex + 1) / surveyQuestions.length) * 100}%` 
-            }}
-          />
-        </div>
-        
-        <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-10">
+      <div className="w-full h-2 bg-gray-100">
+        <Progress value={progressPercentage} className="h-2" />
+      </div>
+      
+      <main className="flex-1 flex flex-col overflow-hidden relative pt-4 pb-16">        
+        <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-6">
           {currentQuestionIndex === 0 && (
             <div className="text-center mb-10">
               <h1 className="text-2xl sm:text-3xl font-bold mb-2">Make a 0% down</h1>
