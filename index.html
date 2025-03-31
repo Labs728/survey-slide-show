@@ -1,78 +1,26 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mortgage Survey</title>
-    <meta name="description" content="Mortgage Survey Application" />
+    <title>survey-slide-show</title>
+    <meta name="description" content="Lovable Generated Project" />
     <meta name="author" content="Lovable" />
-    <link rel="stylesheet" href="styles.css" />
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <meta property="og:title" content="Lovable Generated Project" />
+    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
   </head>
 
   <body>
-    <div id="app">
-      <!-- Preloader -->
-      <div id="survey-preloader" class="preloader">
-        <div class="preloader-content">
-          <div class="house-image">
-            <img src="/lovable-uploads/5bb5bae0-0907-41a0-9436-99588a03e4a7.png" alt="House" />
-          </div>
-          <p class="loading-text">Loading...</p>
-          <div class="progress-container">
-            <div class="progress-bar"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Header -->
-      <header id="survey-header">
-        <div class="header-logo">
-          <img src="/lovable-uploads/06f1ae34-1347-4c18-b83e-1a1565b1e48a.png" alt="Rocket Mortgage Logo" />
-        </div>
-        <a href="tel:+1234567890" class="phone-link">
-          <i class="fa-solid fa-phone"></i>
-        </a>
-      </header>
-
-      <!-- Progress Bar -->
-      <div class="progress-container top-progress">
-        <div id="survey-progress" class="progress-bar"></div>
-      </div>
-
-      <!-- Main Survey Area -->
-      <main id="survey-main">
-        <!-- Survey Container -->
-        <div id="survey-container">
-          <!-- Initial Welcome Message -->
-          <div id="welcome-message" class="survey-welcome">
-            <h1>Make a 0% down</h1>
-            <h1>payment and skip the</h1>
-            <h1>mortgage insurance.</h1>
-            <h1>See if you qualify for a</h1>
-            <h1>VA loan today!</h1>
-          </div>
-          
-          <!-- Questions will be inserted here dynamically -->
-          <div id="question-container" class="question-container">
-            <!-- Questions are added dynamically via JavaScript -->
-          </div>
-        </div>
-      </main>
-
-      <!-- Thank you page (hidden initially) -->
-      <div id="thank-you-page" class="hidden">
-        <div class="thank-you-content">
-          <h1>Thank You!</h1>
-          <p>Thanks for taking your time to answer our survey, someone will be with you shortly</p>
-        </div>
-      </div>
-    </div>
-
+    <div id="root"></div>
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script src="script.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

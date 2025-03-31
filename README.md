@@ -1,47 +1,39 @@
 
 # Mortgage Survey Application
 
-A responsive, animated survey application built with pure HTML, CSS, and JavaScript. This application presents one question at a time with smooth slide animations between questions.
+This is an animated survey application with a slide-based question interface. It features a responsive design that works well on mobile devices and includes a custom loading screen, navigation, and elegant transitions.
 
 ## Features
 
-- Animated house preloader with progress bar
-- Custom header with Rocket Mortgage branding
-- Progress indicator showing survey completion percentage
-- Animated transitions between questions
-- Support for different question types:
-  - Options selection (with icons)
-  - Input fields (with optional prefix)
-  - Form inputs
-- Mobile responsive design
-- Back button to navigate to previous questions
-- Styled with a white, red, and black color scheme
-- "Thank You" page after survey submission
+- Single-question-at-a-time interface with smooth slide animations
+- Progress indicator at the top of the survey
+- Back button to revisit previous questions
+- Mobile-responsive design
+- Custom house preloader with animated progress bar
+- Multiple question types (options, input fields, forms)
+- Beautiful "Thank You" page after submission
 
-## Project Structure
+## Project Setup
 
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
 ```
-├── index.html        # Main HTML file with the application structure
-├── styles.css        # CSS styles for the application
-├── script.js         # JavaScript code for the survey functionality
-└── lovable-uploads/  # Directory containing uploaded images
+3. Start the development server:
+```bash
+npm run dev
 ```
 
-## Setup Instructions
+## Adding New Questions
 
-1. Clone the repository or download the project files.
-2. Ensure all images are placed in the correct directory:
-   - Rocket Mortgage Logo (`/lovable-uploads/06f1ae34-1347-4c18-b83e-1a1565b1e48a.png`)
-   - House image for preloader (`/lovable-uploads/5bb5bae0-0907-41a0-9436-99588a03e4a7.png`)
-3. Open `index.html` in a web browser to view the application.
-
-## How to Configure the Survey
-
-The survey questions are defined in the `script.js` file as an array of question objects. You can modify this array to add, remove, or edit questions.
+The survey questions are defined in the `surveyQuestions` array in `src/pages/Index.tsx`. You can add, remove, or modify questions by editing this array.
 
 ### Question Types
 
-#### Options Question
+#### Option Questions
+
+For questions with multiple choices:
 
 ```javascript
 {
@@ -49,105 +41,95 @@ The survey questions are defined in the `script.js` file as an array of question
   title: 'Your question text here?',
   type: 'options',
   options: [
-    { id: 'option1', label: 'Option 1 Label', icon: 'fa-solid fa-icon-name' },
-    { id: 'option2', label: 'Option 2 Label', icon: 'fa-solid fa-icon-name' },
-    // Add more options as needed
+    { id: 'option1', label: 'Option 1 Text', icon: <YourIconComponent /> }, // Icon is optional
+    { id: 'option2', label: 'Option 2 Text' },
+    // Add as many options as needed
   ],
 }
 ```
 
-- `id` - Unique identifier for the question
-- `title` - The question text shown to the user
-- `type` - Must be `'options'` for selection questions
-- `options` - Array of option objects:
-  - `id` - Unique identifier for the option
-  - `label` - Text displayed for the option
-  - `icon` - (Optional) Font Awesome icon class
+Selected options will automatically be styled with green backgrounds and checkmarks.
 
-#### Input Question
+#### Input Questions
+
+For questions requiring text/number input:
 
 ```javascript
 {
   id: 'uniqueId',
-  title: 'Your question text here?',
+  title: 'Your input question text here?',
   type: 'input',
-  inputType: 'text', // or 'number', 'email', etc.
+  inputType: 'number', // or 'text', 'email', etc.
   placeholder: 'Placeholder text',
   prefix: '$', // Optional prefix for the input
 }
 ```
 
-- `id` - Unique identifier for the question
-- `title` - The question text shown to the user
-- `type` - Must be `'input'` for input field questions
-- `inputType` - HTML input type (e.g., 'text', 'number', 'email')
-- `placeholder` - Placeholder text for the input field
-- `prefix` - (Optional) Symbol or text to show before the input value
+#### Form Questions
 
-#### Form Question
+For multi-input form sections:
 
 ```javascript
 {
-  id: 'uniqueId',
-  title: 'Your question text here?',
+  id: 'contactInfo',
+  title: 'Contact information',
   type: 'form',
+  // The form fields are defined in the renderQuestion function in Index.tsx
 }
 ```
 
-- `id` - Unique identifier for the question
-- `title` - The question text shown to the user
-- `type` - Must be `'form'` for form-based questions
+## Customizing the Preloader
 
-The form question type is pre-configured with name, email, and phone fields. If you want different fields, you'll need to modify the `renderFormQuestion()` function in `script.js`.
+The preloader component in `src/components/SurveyPreloader.tsx` displays a custom house image and an animated progress bar. You can:
 
-### Form Submission
+1. Replace the house image by updating the image source
+2. Adjust animation timing by modifying the setTimeout values
+3. Change the styling of the progress bar using Tailwind classes
 
-By default, the form submission is set up for demo purposes and doesn't actually send data to a server. To connect it to a backend:
+## Navigation Between Questions
 
-1. Open `script.js`
-2. Find the `handleSubmitClick()` function
-3. Uncomment and modify the `fetch()` call to use your formspree endpoint or custom API
-4. Customize the success and error handling as needed
+- Forward navigation occurs when clicking the "Next" button
+- Backward navigation uses the "Back" button to revisit previous questions
+- Users can correct answers by navigating back and selecting different options
 
-## Customizing the Design
+## Progress Indicator
 
-### Colors
+The progress bar at the top shows how far the user has advanced in the survey:
 
-The primary colors used in this project are:
+1. It automatically updates based on the current question index
+2. The width is calculated as: (currentIndex + 1) / totalQuestions * 100%
+3. The color is set in the Progress component (default: primary color)
 
-- White (`#fff`) - Background and text areas
-- Black (`#000` and `#333`) - Buttons and text
-- Red (`#ef4444`) - Primary accent color and progress bar
-- Green (`#22c55e`) - Selected option background
+## Form Submission
 
-To change these colors, modify the relevant styles in the `styles.css` file.
+The form submission process:
 
-### Fonts
+1. Collects all question answers into a FormData object
+2. Submits the data (currently simulated with a timeout)
+3. Redirects to the "Thank You" page
 
-The application uses the system font stack:
-```css
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-```
+## Mobile Optimization
 
-To use a custom font:
-1. Add the font import to the `<head>` section of `index.html`
-2. Update the font-family in the CSS file
+The application is designed to be fully responsive:
 
-### Icons
+- Flexible layouts using Flexbox
+- Media queries for different screen sizes
+- Touch-friendly large buttons and input fields
+- Proper spacing for mobile devices
 
-The project uses Font Awesome for icons. If you want to add different icons:
-1. Make sure you have the Font Awesome library linked in the `index.html` file
-2. Choose icons from the [Font Awesome website](https://fontawesome.com/icons)
-3. Update the icon classes in the question configuration
+## Important Components
 
-## Browser Compatibility
+- `SurveyQuestion`: Handles the question container and animations
+- `SurveyOption`: Renders option-type questions with selection
+- `SurveyInput`: Custom input fields with optional prefixes
+- `SurveyButton`: Styled buttons for navigation
+- `SurveyHeader`: The application header with logo
+- `SurveyPreloader`: Loading screen with house image and progress bar
+- `Progress`: UI component for progress indicators
 
-This application is designed to work in modern browsers. It uses standard HTML5, CSS3, and ES6+ JavaScript features. For older browser support, consider adding polyfills or using a transpiler like Babel.
+## Adding Custom Icons
 
-## License
+To add a custom icon for use in questions:
 
-This project is provided as-is with no warranty. You are free to modify and use it for personal and commercial projects.
-
----
-
-For any questions or issues, please open an issue in the repository.
+1. Create a new icon component in the `SurveyIcons.tsx` file
+2. Import and use it in your question definition
