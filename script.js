@@ -1,4 +1,3 @@
-
 // Survey Questions Data
 const surveyQuestions = [
   {
@@ -489,7 +488,11 @@ function handleSubmitClick() {
   }
 }
 
+// Show thank you page - Only called after form submission
 function showThankYouPage() {
+  // Hide the main survey
+  document.getElementById('app').style.display = 'none';
+  
   // Show the thank you page
   elements.thankYouPage.classList.remove('hidden');
 }
