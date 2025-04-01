@@ -12,8 +12,9 @@ This is an animated survey application with a slide-based question interface. It
 - Mobile-responsive design
 - Custom house preloader with animated progress bar
 - Multiple question types (options, input fields, select dropdowns)
-- Beautiful "Thank You" page after submission
+- Beautiful "Thank You" page after submission with animations and toast notifications
 - Form submission via Formspree
+- Customizable SVG logos for navbar and Thank You page
 
 ## Project Setup
 
@@ -28,11 +29,72 @@ npm install
 npm run dev
 ```
 
+## Customizing SVG Images
+
+### Header Logo Customization
+
+To replace the default Rocket Mortgage logo in the navbar with your own SVG:
+
+1. Add your SVG file to the `public` folder (e.g., `public/your-logo.svg`)
+2. Open `src/App.tsx` and modify the ThankYou route to include the logoSvgPath prop:
+
+```jsx
+<Route path="/thank-you" element={<ThankYou logoSvgPath="/your-logo.svg" />} />
+```
+
+3. If you want to use the custom logo on other pages with the SurveyHeader component, pass the logoSvgPath prop:
+
+```jsx
+<SurveyHeader logoSvgPath="/your-logo.svg" />
+```
+
+### Thank You Page SVG Customization
+
+To add an SVG image to the empty circular slot on the Thank You page:
+
+1. Add your SVG file to the `public` folder (e.g., `public/thank-you-icon.svg`)
+2. Open `src/App.tsx` and modify the ThankYou route:
+
+```jsx
+<Route 
+  path="/thank-you" 
+  element={
+    <ThankYou 
+      logoSvgPath="/your-logo.svg" 
+      thankYouSvgPath="/thank-you-icon.svg" 
+    />
+  } 
+/>
+```
+
+## SVG Image Guidelines
+
+For the best appearance:
+
+- **Header Logo SVG**:
+  - Recommended dimensions: 160px × 50px
+  - Keep the file size under 100KB for optimal performance
+  - Use a transparent background
+
+- **Thank You Page SVG**:
+  - Recommended dimensions: Square format (e.g., 200px × 200px)
+  - Keep the file size under 200KB
+  - Simple designs work best in the circular container
+
 ## Configuring Formspree
 
 1. Go to [Formspree](https://formspree.io/) and create a new form
 2. Replace the `formspreeUrl` variable in `src/pages/Index.tsx` with your form endpoint URL
 3. Test your submission to ensure data is being received properly
+
+## Animation Features
+
+The Thank You page includes several animations:
+
+- Fade-in sequence for content elements
+- Scale-in animation for the main card
+- Hover effects on the card and button
+- Toast notification that appears after loading
 
 ## Survey Flow
 
@@ -118,12 +180,3 @@ The application is designed to be fully responsive:
 - Media queries for different screen sizes
 - Touch-friendly large buttons and input fields
 - Proper spacing for mobile devices
-
-## Important Components
-
-- `SurveyQuestion`: Handles the question container and animations
-- `SurveyOption`: Renders option-type questions with selection
-- `SurveyInput`: Custom input fields with optional prefixes
-- `SurveyButton`: Styled buttons for navigation
-- `SurveyHeader`: The application header with logo
-- `SurveyPreloader`: Loading screen with house image and progress bar
