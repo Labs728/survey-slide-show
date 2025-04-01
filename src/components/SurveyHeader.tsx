@@ -12,7 +12,7 @@ const SurveyHeader = ({ logoSvgPath }: SurveyHeaderProps) => {
         {logoSvgPath ? (
           <img 
             src={logoSvgPath} 
-            alt="Logo" 
+            alt="Company Logo" 
             className="h-8" 
           />
         ) : (

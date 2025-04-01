@@ -10,6 +10,10 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Define SVG paths that will be used across the app
+const logoSvgPath = "/logo.svg"; // This should be in the public folder
+const thankYouSvgPath = "/thank-you-icon.svg"; // This should be in the public folder
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -22,8 +26,8 @@ const App = () => (
             path="/thank-you" 
             element={
               <ThankYou 
-                logoSvgPath="/your-logo.svg" 
-                thankYouSvgPath="/your-thank-you-icon.svg" 
+                logoSvgPath={logoSvgPath} 
+                thankYouSvgPath={thankYouSvgPath} 
               />
             } 
           />

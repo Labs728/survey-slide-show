@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -13,8 +12,42 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
+// Define survey question types
+interface BaseQuestion {
+  id: string;
+  title: string;
+  type: string;
+}
+
+interface OptionQuestion extends BaseQuestion {
+  type: 'options';
+  options: {
+    id: string;
+    label: string;
+    icon?: React.ReactNode;
+  }[];
+}
+
+interface InputQuestion extends BaseQuestion {
+  type: 'input';
+  inputType: string;
+  placeholder: string;
+  prefix?: string;
+  sensitive?: boolean;
+}
+
+interface SelectQuestion extends BaseQuestion {
+  type: 'select';
+  options: {
+    id: string;
+    label: string;
+  }[];
+}
+
+type SurveyQuestion = OptionQuestion | InputQuestion | SelectQuestion;
+
 // Define the base survey questions
-const baseQuestions = [
+const baseQuestions: SurveyQuestion[] = [
   {
     id: 'goal',
     title: "What's your goal?",
@@ -28,7 +61,7 @@ const baseQuestions = [
 ];
 
 // Define the refinance specific questions
-const refinanceQuestions = [
+const refinanceQuestions: SurveyQuestion[] = [
   {
     id: 'name',
     title: 'What is your full name?',
@@ -205,7 +238,7 @@ const refinanceQuestions = [
 ];
 
 // Define the buy home specific questions
-const buyHomeQuestions = [
+const buyHomeQuestions: SurveyQuestion[] = [
   {
     id: 'name',
     title: 'What is your full name?',
@@ -403,7 +436,7 @@ const buyHomeQuestions = [
 ];
 
 // Define the equity specific questions
-const equityQuestions = [
+const equityQuestions: SurveyQuestion[] = [
   {
     id: 'name',
     title: 'What is your full name?',
@@ -569,11 +602,14 @@ const Index = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [animationState, setAnimationState] = useState<'in' | 'out' | 'none'>('in');
   const [loading, setLoading] = useState(true);
-  const [surveyQuestions, setSurveyQuestions] = useState([...baseQuestions]);
+  const [surveyQuestions, setSurveyQuestions] = useState<SurveyQuestion[]>([...baseQuestions]);
   const formRef = useRef<HTMLFormElement>(null);
   
   // Formspree URL - replace with your actual URL
   const formspreeUrl = "https://formspree.io/f/YOUR_FORM_ID";
+
+  // Logo path for the header
+  const logoSvgPath = "/logo.svg"; // This should be in the public folder
 
   const progressPercentage = ((currentQuestionIndex + 1) / surveyQuestions.length) * 100;
   const currentQuestion = surveyQuestions[currentQuestionIndex];
@@ -761,7 +797,7 @@ const Index = () => {
     <div className="min-h-screen bg-white flex flex-col">
       <SurveyPreloader isLoading={loading} />
       
-      <SurveyHeader />
+      <SurveyHeader logoSvgPath={logoSvgPath} />
       
       <div className="w-full h-2 bg-gray-100">
         <Progress value={progressPercentage} className="h-2" />
