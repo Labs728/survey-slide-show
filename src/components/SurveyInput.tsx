@@ -1,21 +1,33 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { AlertCircle } from 'lucide-react';
 
 interface SurveyInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   prefix?: string;
+  sensitive?: boolean;
 }
 
 const SurveyInput: React.FC<SurveyInputProps> = ({
   label,
   className,
   prefix,
+  sensitive = false,
   ...props
 }) => {
   return (
     <div className="mb-4">
-      <label className="block text-gray-700 mb-2">{label}</label>
+      {label && (
+        <div className="flex items-center mb-2">
+          <label className="block text-gray-700">{label}</label>
+          {sensitive && (
+            <div className="ml-2 tooltip" title="This information is securely transmitted">
+              <AlertCircle className="w-4 h-4 text-amber-500" />
+            </div>
+          )}
+        </div>
+      )}
       <div className="relative">
         {prefix && (
           <span className="absolute inset-y-0 left-4 flex items-center text-gray-500 text-lg">

@@ -6,12 +6,14 @@ This is an animated survey application with a slide-based question interface. It
 ## Features
 
 - Single-question-at-a-time interface with smooth slide animations
+- Dynamically changing survey questions based on user's goal (Refinance, Buy a Home, or Use Equity)
 - Progress indicator at the top of the survey
 - Back button to revisit previous questions
 - Mobile-responsive design
 - Custom house preloader with animated progress bar
-- Multiple question types (options, input fields, forms)
+- Multiple question types (options, input fields, select dropdowns)
 - Beautiful "Thank You" page after submission
+- Form submission via Formspree
 
 ## Project Setup
 
@@ -20,18 +22,30 @@ This is an animated survey application with a slide-based question interface. It
 ```bash
 npm install
 ```
-3. Start the development server:
+3. Update the Formspree URL in `src/pages/Index.tsx` with your form ID
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-## Adding New Questions
+## Configuring Formspree
 
-The survey questions are defined in the `surveyQuestions` array in `src/pages/Index.tsx`. You can add, remove, or modify questions by editing this array.
+1. Go to [Formspree](https://formspree.io/) and create a new form
+2. Replace the `formspreeUrl` variable in `src/pages/Index.tsx` with your form endpoint URL
+3. Test your submission to ensure data is being received properly
 
-### Question Types
+## Survey Flow
 
-#### Option Questions
+The application dynamically adjusts questions based on the user's goal selection:
+
+1. All users start with the same initial question about their goal
+2. Depending on selection (Refinance, Buy a Home, Use Equity), specific questions are presented
+3. Each path collects relevant information needed for that particular mortgage process
+4. All data is submitted to Formspree at the end of the survey
+
+## Question Types
+
+### Option Questions
 
 For questions with multiple choices:
 
@@ -50,7 +64,7 @@ For questions with multiple choices:
 
 Selected options will automatically be styled with green backgrounds and checkmarks.
 
-#### Input Questions
+### Input Questions
 
 For questions requiring text/number input:
 
@@ -59,54 +73,42 @@ For questions requiring text/number input:
   id: 'uniqueId',
   title: 'Your input question text here?',
   type: 'input',
-  inputType: 'number', // or 'text', 'email', etc.
+  inputType: 'number', // or 'text', 'email', 'tel', etc.
   placeholder: 'Placeholder text',
   prefix: '$', // Optional prefix for the input
+  sensitive: true, // Optional flag for sensitive data
 }
 ```
 
-#### Form Questions
+### Select Questions
 
-For multi-input form sections:
+For dropdown selection questions:
 
 ```javascript
 {
-  id: 'contactInfo',
-  title: 'Contact information',
-  type: 'form',
-  // The form fields are defined in the renderQuestion function in Index.tsx
+  id: 'uniqueId',
+  title: 'Your dropdown question here?',
+  type: 'select',
+  options: [
+    { id: 'option1', label: 'Option 1 Text' },
+    { id: 'option2', label: 'Option 2 Text' },
+    // Add as many options as needed
+  ],
 }
 ```
 
-## Customizing the Preloader
+## Sensitive Information Handling
 
-The preloader component in `src/components/SurveyPreloader.tsx` displays a custom house image and an animated progress bar. You can:
-
-1. Replace the house image by updating the image source
-2. Adjust animation timing by modifying the setTimeout values
-3. Change the styling of the progress bar using Tailwind classes
-
-## Navigation Between Questions
-
-- Forward navigation occurs when clicking the "Next" button
-- Backward navigation uses the "Back" button to revisit previous questions
-- Users can correct answers by navigating back and selecting different options
-
-## Progress Indicator
-
-The progress bar at the top shows how far the user has advanced in the survey:
-
-1. It automatically updates based on the current question index
-2. The width is calculated as: (currentIndex + 1) / totalQuestions * 100%
-3. The color is set in the Progress component (default: primary color)
+Questions collecting sensitive information (like SSN, account numbers) are marked with an alert icon. These fields should be properly secured during transmission with HTTPS.
 
 ## Form Submission
 
 The form submission process:
 
-1. Collects all question answers into a FormData object
-2. Submits the data (currently simulated with a timeout)
-3. Redirects to the "Thank You" page
+1. Collects all question answers into a single object
+2. Submits the data to Formspree endpoint
+3. Shows success/error toast notification
+4. Redirects to the "Thank You" page upon successful submission
 
 ## Mobile Optimization
 
@@ -125,11 +127,3 @@ The application is designed to be fully responsive:
 - `SurveyButton`: Styled buttons for navigation
 - `SurveyHeader`: The application header with logo
 - `SurveyPreloader`: Loading screen with house image and progress bar
-- `Progress`: UI component for progress indicators
-
-## Adding Custom Icons
-
-To add a custom icon for use in questions:
-
-1. Create a new icon component in the `SurveyIcons.tsx` file
-2. Import and use it in your question definition

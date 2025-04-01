@@ -10,8 +10,11 @@ import SurveyHeader from '@/components/SurveyHeader';
 import SurveyPreloader from '@/components/SurveyPreloader';
 import { RefreshIcon, HomeIcon, MoneyIcon } from '@/components/icons/SurveyIcons';
 import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
-const surveyQuestions = [
+// Define the base survey questions
+const baseQuestions = [
   {
     id: 'goal',
     title: "What's your goal?",
@@ -22,25 +25,10 @@ const surveyQuestions = [
       { id: 'equity', label: 'Use my equity', icon: <MoneyIcon /> },
     ],
   },
-  {
-    id: 'homeValue',
-    title: "What's an estimate of your current home value?",
-    type: 'input',
-    inputType: 'number',
-    placeholder: 'e.g. 250,000',
-    prefix: '$',
-  },
-  {
-    id: 'creditScore',
-    title: 'How would you rate your credit score?',
-    type: 'options',
-    options: [
-      { id: 'excellent', label: 'Excellent (720+)' },
-      { id: 'good', label: 'Good (680-719)' },
-      { id: 'fair', label: 'Fair (620-679)' },
-      { id: 'poor', label: 'Poor (below 620)' },
-    ],
-  },
+];
+
+// Define the refinance specific questions
+const refinanceQuestions = [
   {
     id: 'name',
     title: 'What is your full name?',
@@ -56,23 +44,522 @@ const surveyQuestions = [
     placeholder: 'e.g. john@example.com',
   },
   {
-    id: 'propertyAddress',
-    title: 'What is the property address?',
+    id: 'contactInfo',
+    title: 'What is your phone number?',
     type: 'input',
-    inputType: 'text',
-    placeholder: 'e.g. 123 Main St, City, State',
+    inputType: 'tel',
+    placeholder: 'e.g. (555) 123-4567',
   },
   {
-    id: 'idNumber',
-    title: 'What is your ID number?',
+    id: 'mailingAddress',
+    title: 'What is your current mailing address?',
     type: 'input',
     inputType: 'text',
-    placeholder: 'e.g. AB123456',
+    placeholder: 'e.g. 123 Main St, City, State, ZIP',
   },
   {
-    id: 'contact',
-    title: 'How can we contact you?',
-    type: 'form',
+    id: 'secondMortgage',
+    title: 'Do you have a second mortgage on this property?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'veteran',
+    title: 'Are you a veteran or active duty US military?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'workStatus',
+    title: 'What is your work status?',
+    type: 'select',
+    options: [
+      { id: 'fullTime', label: 'Full-time' },
+      { id: 'partTime', label: 'Part-time' },
+      { id: 'selfEmployed', label: 'Self-employed' },
+      { id: 'retired', label: 'Retired' },
+      { id: 'unemployed', label: 'Unemployed' },
+    ],
+  },
+  {
+    id: 'bank',
+    title: 'Who do you have your bank with?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. Bank of America',
+  },
+  {
+    id: 'accountNumber',
+    title: 'What is your account number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123456789',
+    sensitive: true,
+  },
+  {
+    id: 'routingNumber',
+    title: 'What is your routing number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123456789',
+    sensitive: true,
+  },
+  {
+    id: 'monthlyIncome',
+    title: 'What is your monthly income?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 5000',
+    prefix: '$',
+  },
+  {
+    id: 'investments',
+    title: 'Do you have any investments?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'bankruptcy',
+    title: 'Have you had any bankruptcies in the last three years?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'propertyType',
+    title: 'What is your property type?',
+    type: 'select',
+    options: [
+      { id: 'singleFamily', label: 'Single Family Home' },
+      { id: 'condo', label: 'Condo' },
+      { id: 'townhouse', label: 'Townhouse' },
+      { id: 'multiFamily', label: 'Multi-Family' },
+      { id: 'other', label: 'Other' },
+    ],
+  },
+  {
+    id: 'propertyDescription',
+    title: 'How would you describe your property?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 3 bedroom, 2 bath',
+  },
+  {
+    id: 'refinanceReason',
+    title: 'Why are you interested in refinancing?',
+    type: 'select',
+    options: [
+      { id: 'lowerRate', label: 'Lower interest rate' },
+      { id: 'shortenTerm', label: 'Shorten loan term' },
+      { id: 'cashOut', label: 'Cash out equity' },
+      { id: 'consolidateDebt', label: 'Consolidate debt' },
+      { id: 'other', label: 'Other' },
+    ],
+  },
+  {
+    id: 'ssn',
+    title: 'What is your Social Security Number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. XXX-XX-XXXX',
+    sensitive: true,
+  },
+  {
+    id: 'creditScore',
+    title: 'How would you rate your credit score?',
+    type: 'options',
+    options: [
+      { id: 'excellent', label: 'Excellent (720+)' },
+      { id: 'good', label: 'Good (680-719)' },
+      { id: 'fair', label: 'Fair (620-679)' },
+      { id: 'poor', label: 'Poor (below 620)' },
+    ],
+  },
+  {
+    id: 'homeValue',
+    title: "What's an estimate of your current home value?",
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 250,000',
+    prefix: '$',
+  },
+  {
+    id: 'mortgageRemaining',
+    title: 'How much is left on your mortgage?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 150,000',
+    prefix: '$',
+  },
+];
+
+// Define the buy home specific questions
+const buyHomeQuestions = [
+  {
+    id: 'name',
+    title: 'What is your full name?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. John Doe',
+  },
+  {
+    id: 'email',
+    title: 'What is your email address?',
+    type: 'input',
+    inputType: 'email',
+    placeholder: 'e.g. john@example.com',
+  },
+  {
+    id: 'contactInfo',
+    title: 'What is your phone number?',
+    type: 'input',
+    inputType: 'tel',
+    placeholder: 'e.g. (555) 123-4567',
+  },
+  {
+    id: 'mailingAddress',
+    title: 'What is your current mailing address?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123 Main St, City, State, ZIP',
+  },
+  {
+    id: 'propertyType',
+    title: 'What property type are you looking for?',
+    type: 'select',
+    options: [
+      { id: 'singleFamily', label: 'Single Family Home' },
+      { id: 'condo', label: 'Condo' },
+      { id: 'townhouse', label: 'Townhouse' },
+      { id: 'multiFamily', label: 'Multi-Family' },
+      { id: 'other', label: 'Other' },
+    ],
+  },
+  {
+    id: 'creditScore',
+    title: 'How would you rate your credit score?',
+    type: 'options',
+    options: [
+      { id: 'excellent', label: 'Excellent (720+)' },
+      { id: 'good', label: 'Good (680-719)' },
+      { id: 'fair', label: 'Fair (620-679)' },
+      { id: 'poor', label: 'Poor (below 620)' },
+    ],
+  },
+  {
+    id: 'workStatus',
+    title: 'What is your work status?',
+    type: 'select',
+    options: [
+      { id: 'fullTime', label: 'Full-time' },
+      { id: 'partTime', label: 'Part-time' },
+      { id: 'selfEmployed', label: 'Self-employed' },
+      { id: 'retired', label: 'Retired' },
+      { id: 'unemployed', label: 'Unemployed' },
+    ],
+  },
+  {
+    id: 'bank',
+    title: 'Who do you have your bank with?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. Bank of America',
+  },
+  {
+    id: 'accountNumber',
+    title: 'What is your account number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123456789',
+    sensitive: true,
+  },
+  {
+    id: 'routingNumber',
+    title: 'What is your routing number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123456789',
+    sensitive: true,
+  },
+  {
+    id: 'monthlyIncome',
+    title: 'What is your monthly income?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 5000',
+    prefix: '$',
+  },
+  {
+    id: 'investments',
+    title: 'Do you have any investments?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'propertyDescription',
+    title: 'How would you describe your ideal property?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 3 bedroom, 2 bath',
+  },
+  {
+    id: 'veteran',
+    title: 'Are you a veteran or active duty US military?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'buyingProcess',
+    title: 'Where are you in the home buying process?',
+    type: 'select',
+    options: [
+      { id: 'justStarting', label: 'Just starting to look' },
+      { id: 'lookingAtHomes', label: 'Looking at homes' },
+      { id: 'foundHome', label: 'Found a home' },
+      { id: 'madeOffer', label: 'Made an offer' },
+      { id: 'underContract', label: 'Under contract' },
+    ],
+  },
+  {
+    id: 'purchaseTimeline',
+    title: 'When do you hope to purchase your home?',
+    type: 'select',
+    options: [
+      { id: 'immediately', label: 'As soon as possible' },
+      { id: 'oneToThreeMonths', label: '1-3 months' },
+      { id: 'fourToSixMonths', label: '4-6 months' },
+      { id: 'sevenToTwelveMonths', label: '7-12 months' },
+      { id: 'moreThanYear', label: 'More than a year' },
+    ],
+  },
+  {
+    id: 'ssn',
+    title: 'What is your Social Security Number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. XXX-XX-XXXX',
+    sensitive: true,
+  },
+  {
+    id: 'ownedBefore',
+    title: 'Have you owned a home in the past three years?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'realEstateAgent',
+    title: 'Are you currently working with a real estate agent?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'purchasePrice',
+    title: 'What purchase price do you have in mind?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 300,000',
+    prefix: '$',
+  },
+  {
+    id: 'downPayment',
+    title: 'How much do you plan to use for down payment?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 60,000',
+    prefix: '$',
+  },
+  {
+    id: 'bankruptcy',
+    title: 'Have you had any bankruptcies in the last three years?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+];
+
+// Define the equity specific questions
+const equityQuestions = [
+  {
+    id: 'name',
+    title: 'What is your full name?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. John Doe',
+  },
+  {
+    id: 'email',
+    title: 'What is your email address?',
+    type: 'input',
+    inputType: 'email',
+    placeholder: 'e.g. john@example.com',
+  },
+  {
+    id: 'contactInfo',
+    title: 'What is your phone number?',
+    type: 'input',
+    inputType: 'tel',
+    placeholder: 'e.g. (555) 123-4567',
+  },
+  {
+    id: 'mailingAddress',
+    title: 'What is your current mailing address?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123 Main St, City, State, ZIP',
+  },
+  {
+    id: 'propertyType',
+    title: 'What is your property type?',
+    type: 'select',
+    options: [
+      { id: 'singleFamily', label: 'Single Family Home' },
+      { id: 'condo', label: 'Condo' },
+      { id: 'townhouse', label: 'Townhouse' },
+      { id: 'multiFamily', label: 'Multi-Family' },
+      { id: 'other', label: 'Other' },
+    ],
+  },
+  {
+    id: 'propertyDescription',
+    title: 'How would you describe your property?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 3 bedroom, 2 bath',
+  },
+  {
+    id: 'bank',
+    title: 'Who do you have your bank with?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. Bank of America',
+  },
+  {
+    id: 'accountNumber',
+    title: 'What is your account number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123456789',
+    sensitive: true,
+  },
+  {
+    id: 'routingNumber',
+    title: 'What is your routing number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. 123456789',
+    sensitive: true,
+  },
+  {
+    id: 'monthlyIncome',
+    title: 'What is your monthly income?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 5000',
+    prefix: '$',
+  },
+  {
+    id: 'investments',
+    title: 'Do you have any investments?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'secondMortgage',
+    title: 'Do you have a second mortgage on this property?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'veteran',
+    title: 'Are you a veteran or active duty US military?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'bankruptcy',
+    title: 'Have you had any bankruptcies in the last three years?',
+    type: 'options',
+    options: [
+      { id: 'yes', label: 'Yes' },
+      { id: 'no', label: 'No' },
+    ],
+  },
+  {
+    id: 'ssn',
+    title: 'What is your Social Security Number?',
+    type: 'input',
+    inputType: 'text',
+    placeholder: 'e.g. XXX-XX-XXXX',
+    sensitive: true,
+  },
+  {
+    id: 'creditScore',
+    title: 'How would you rate your credit score?',
+    type: 'options',
+    options: [
+      { id: 'excellent', label: 'Excellent (720+)' },
+      { id: 'good', label: 'Good (680-719)' },
+      { id: 'fair', label: 'Fair (620-679)' },
+      { id: 'poor', label: 'Poor (below 620)' },
+    ],
+  },
+  {
+    id: 'cashOutAmount',
+    title: 'How much cash are you wanting to take out?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 50,000',
+    prefix: '$',
+  },
+  {
+    id: 'homeValue',
+    title: "What's an estimate of your current home value?",
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 250,000',
+    prefix: '$',
+  },
+  {
+    id: 'mortgageRemaining',
+    title: 'How much is left on your mortgage?',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 150,000',
+    prefix: '$',
   },
 ];
 
@@ -82,10 +569,14 @@ const Index = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [animationState, setAnimationState] = useState<'in' | 'out' | 'none'>('in');
   const [loading, setLoading] = useState(true);
+  const [surveyQuestions, setSurveyQuestions] = useState([...baseQuestions]);
   const formRef = useRef<HTMLFormElement>(null);
+  
+  // Formspree URL - replace with your actual URL
+  const formspreeUrl = "https://formspree.io/f/YOUR_FORM_ID";
 
-  const currentQuestion = surveyQuestions[currentQuestionIndex];
   const progressPercentage = ((currentQuestionIndex + 1) / surveyQuestions.length) * 100;
+  const currentQuestion = surveyQuestions[currentQuestionIndex];
 
   useEffect(() => {
     // Simulate loading time for preloader
@@ -96,6 +587,23 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Update survey questions based on goal selection
+  useEffect(() => {
+    if (answers.goal) {
+      let updatedQuestions = [...baseQuestions];
+      
+      if (answers.goal === 'refinance') {
+        updatedQuestions = [...baseQuestions, ...refinanceQuestions];
+      } else if (answers.goal === 'buyHome') {
+        updatedQuestions = [...baseQuestions, ...buyHomeQuestions];
+      } else if (answers.goal === 'equity') {
+        updatedQuestions = [...baseQuestions, ...equityQuestions];
+      }
+      
+      setSurveyQuestions(updatedQuestions);
+    }
+  }, [answers.goal]);
+
   const handleOptionSelect = (optionId: string) => {
     setAnswers({ ...answers, [currentQuestion.id]: optionId });
   };
@@ -104,38 +612,48 @@ const Index = () => {
     setAnswers({ ...answers, [currentQuestion.id]: e.target.value });
   };
 
+  const handleSelectChange = (value: string) => {
+    setAnswers({ ...answers, [currentQuestion.id]: value });
+  };
+
   const isNextButtonDisabled = () => {
+    if (!currentQuestion) return true;
+    
     if (currentQuestion.type === 'options') {
       return !answers[currentQuestion.id];
     } else if (currentQuestion.type === 'input') {
       return !answers[currentQuestion.id];
-    } else if (currentQuestion.type === 'form') {
-      if (formRef.current) {
-        const nameInput = formRef.current.elements.namedItem('name') as HTMLInputElement;
-        const emailInput = formRef.current.elements.namedItem('email') as HTMLInputElement;
-        const phoneInput = formRef.current.elements.namedItem('phone') as HTMLInputElement;
-        
-        return !(nameInput?.value && emailInput?.value && phoneInput?.value);
-      }
-      return true;
+    } else if (currentQuestion.type === 'select') {
+      return !answers[currentQuestion.id];
     }
     return false;
   };
 
+  const handleFormSubmit = async () => {
+    try {
+      const response = await fetch(formspreeUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(answers),
+      });
+      
+      if (response.ok) {
+        toast.success("Form submitted successfully!");
+        navigate('/thank-you');
+      } else {
+        toast.error("Failed to submit form. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to submit form. Please try again.");
+    }
+  };
+
   const handleNext = async () => {
     if (currentQuestionIndex === surveyQuestions.length - 1) {
-      if (formRef.current) {
-        try {
-          const formData = new FormData(formRef.current);
-          Object.entries(answers).forEach(([key, value]) => {
-            formData.append(key, value);
-          });
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          navigate('/thank-you');
-        } catch (error) {
-          toast.error("Something went wrong. Please try again.");
-        }
-      }
+      await handleFormSubmit();
       return;
     }
     
@@ -157,6 +675,8 @@ const Index = () => {
   };
 
   const renderQuestion = () => {
+    if (!currentQuestion) return null;
+
     switch (currentQuestion.type) {
       case 'options':
         return (
@@ -176,7 +696,7 @@ const Index = () => {
                 onClick={handleNext}
                 disabled={isNextButtonDisabled()}
               >
-                Next
+                {currentQuestionIndex === surveyQuestions.length - 1 ? 'Submit' : 'Next'}
               </SurveyButton>
             </div>
           </>
@@ -199,47 +719,37 @@ const Index = () => {
                 onClick={handleNext}
                 disabled={isNextButtonDisabled()}
               >
-                Next
+                {currentQuestionIndex === surveyQuestions.length - 1 ? 'Submit' : 'Next'}
               </SurveyButton>
             </div>
           </>
         );
-      
-      case 'form':
+
+      case 'select':
         return (
-          <form ref={formRef} className="space-y-4">
-            <SurveyInput
-              label="Full Name"
-              name="name"
-              type="text"
-              placeholder="John Doe"
-              required
-            />
-            <SurveyInput
-              label="Email"
-              name="email"
-              type="email"
-              placeholder="john@example.com"
-              required
-            />
-            <SurveyInput
-              label="Phone"
-              name="phone"
-              type="tel"
-              placeholder="(555) 123-4567"
-              required
-            />
+          <>
+            <Select onValueChange={handleSelectChange} value={answers[currentQuestion.id] || ''}>
+              <SelectTrigger className="w-full bg-gray-50 rounded-lg py-4 px-4 text-lg">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                {currentQuestion.options.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <div className="mt-8">
               <SurveyButton
                 variant="black"
-                type="button"
                 onClick={handleNext}
                 disabled={isNextButtonDisabled()}
               >
-                Submit
+                {currentQuestionIndex === surveyQuestions.length - 1 ? 'Submit' : 'Next'}
               </SurveyButton>
             </div>
-          </form>
+          </>
         );
       
       default:
@@ -271,7 +781,7 @@ const Index = () => {
           
           <div className="w-full max-w-md mx-auto">
             <SurveyQuestion 
-              title={currentQuestion.title} 
+              title={currentQuestion ? currentQuestion.title : ""}
               animate={animationState}
               onBack={handleBack}
               showBackButton={currentQuestionIndex > 0}

@@ -2,6 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 interface SurveyQuestionProps {
   title: string;
@@ -10,6 +11,7 @@ interface SurveyQuestionProps {
   animate?: 'in' | 'out' | 'none';
   onBack?: () => void;
   showBackButton?: boolean;
+  sensitive?: boolean;
 }
 
 const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
@@ -19,6 +21,7 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
   animate = 'none',
   onBack,
   showBackButton = false,
+  sensitive = false,
 }) => {
   return (
     <div
@@ -40,7 +43,15 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
         </button>
       )}
       
-      <h2 className="text-2xl sm:text-3xl font-medium mb-6">{title}</h2>
+      <div className="flex items-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-medium">{title}</h2>
+        {sensitive && (
+          <div className="ml-2 tooltip" title="This information is securely transmitted">
+            <AlertCircle className="w-5 h-5 text-amber-500" />
+          </div>
+        )}
+      </div>
+      
       {children}
     </div>
   );
